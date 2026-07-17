@@ -1,2 +1,3 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-:root{--n:#071b33;--n2:#0b2b50;--bg:#f5f7fb;--c:#fff;--t:#16243a;--m:#6f7f96;--l:#e4e9f1;--p:#2f6fed;--p2:#6e52e5;--g:#129a68;--o:#d98208;--r:#d94646;--v:#7157d9;--shadow:0 10px 30px rgba(19,35,61,.07);--shadow2:0 20px 60px rgba(8,27,51,.16)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(
+:root{--navy:#0b1f3a;--navy2:#102f58;--bg:#f4f7fb;--surface:#fff;--text:#17243a;--muted:#6f7f95;--line:#e4e9f1;--primary:#2f6fed;--success:#15996b;--warning:#d9870b;--danger:#d94848;--violet:#7257df;--shadow:0 10px 32px rgba(21,37,63,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family
