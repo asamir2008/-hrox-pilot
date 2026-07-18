@@ -1,15 +1,6 @@
 name: HROX Platform CI
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'platform/**'
-      - '.github/workflows/platform-ci.yml'
-  pull_request:
-    paths:
-      - 'platform/**'
-      - '.github/workflows/platform-ci.yml'
   workflow_dispatch:
 
 jobs:
