@@ -15,27 +15,35 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [ ] User directory and account administration
 
 ### Sprint 2 — Rotation Request and Planning
-- [ ] Director creates rotation request
-- [ ] Coordinator builds plan
-- [ ] Registered users/projects/date selection
-- [ ] Director edits plan directly
-- [ ] Return, approve and automatic assignment release
+- [x] Director creates rotation request in demo workflow
+- [x] Coordinator builds shared plan
+- [x] Registered demo managers/projects/date selection
+- [x] Director edits people, projects and dates directly
+- [x] Return, approve and automatic assignment release
+- [x] Shared workflow state and activity history
+- [ ] Persist workflow in Supabase
+- [ ] Email and in-app assignment notifications
 
 ### Sprint 3 — Field Visit Workspace
-- [ ] Manager task inbox
-- [ ] Check-in
-- [ ] Daily notes
-- [ ] Attachments
-- [ ] Final report submission
+- [x] Role-filtered manager assignment inbox
+- [x] Demo check-in action
+- [x] Daily notes
+- [ ] GPS-enabled check-in
+- [ ] Attachments and evidence upload
+- [x] Final report submission demo
+- [ ] Persist notes and reports in Supabase
 
 ### Sprint 4 — Coordinator Monitoring
-- [ ] Status by manager and project
-- [ ] Individual and consolidated reports
-- [ ] Report return/acceptance workflow
+- [x] Status by manager and project
+- [x] Report acceptance action
+- [x] Consolidated submission to Director
+- [ ] Select one or multiple reports for consolidation
+- [ ] Return report to manager with comments
 
 ### Sprint 5 — Executive Dashboard
-- [ ] KPIs, delays, risks and coverage
-- [ ] Decision-ready reports
+- [x] Initial completion and overdue KPIs
+- [x] Decision dashboard handoff state
+- [ ] Full risk, delay and coverage analytics
 - [ ] Export and audit history
 
 ## Local run
