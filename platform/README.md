@@ -16,6 +16,7 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Project registry component
 - [x] Dual data provider: automatic Demo/Supabase mode
 - [x] Database seed script for projects and initial plan
+- [x] Type-safe Supabase browser client
 - [ ] Connect real Supabase project
 - [ ] Create real users in Supabase Auth
 
@@ -31,8 +32,8 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Dual-mode in-app notification service
 - [x] Notification table and RLS policies
 - [x] Role-based notification center page
-- [x] Workflow notification event mapping for request, review, approval, check-in and reports
-- [ ] Invoke notification mapping from every dashboard action
+- [x] Automatic notifications for request, plan review, return, approval and assignment release
+- [x] Automatic remote workflow persistence when Supabase is connected
 - [ ] Optional email delivery provider
 
 ### Sprint 3 — Field Visit Workspace
@@ -45,7 +46,9 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Final report summary and submission
 - [x] Database columns for GPS, report summary and coordinator comments
 - [x] Assignment attachment table and RLS
-- [ ] Switch dashboard fieldwork actions from local store to Supabase adapter
+- [x] Automatic notifications for check-in and report submission
+- [x] Automatic persistence through workflow-save RPC
+- [ ] Verify real Storage upload and signed-file access after Supabase connection
 
 ### Sprint 4 — Coordinator Monitoring
 - [x] Status by manager and project
@@ -54,7 +57,9 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Return report to manager with comments
 - [x] Consolidated submission to Director
 - [x] Consolidated report tables and RLS policies
-- [ ] Switch coordinator report actions from local store to Supabase adapter
+- [x] Automatic notifications for returned and accepted reports
+- [x] Automatic notification when consolidated report reaches Director
+- [ ] Verify consolidation writes against live Supabase schema
 
 ### Sprint 5 — Executive Dashboard
 - [x] Completion and overdue KPIs
@@ -72,6 +77,7 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] `.env.example`
 - [x] Health endpoint showing Demo/Supabase mode
 - [x] GitHub Actions CI for TypeScript and production build
+- [x] Compile-safety fixes for nullable Supabase clients
 - [ ] Confirm first CI build is green
 - [ ] Import repository into Vercel using `platform` as Root Directory
 - [ ] Add Supabase environment variables
