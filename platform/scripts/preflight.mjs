@@ -1,4 +1,4 @@
-import {existsSync,readFileSync} from 'node:fs';
+import {existsSync,readFileSync,readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 
 const root=process.cwd();
@@ -12,7 +12,7 @@ const requiredFiles=[
   'lib/data-provider.ts',
   'lib/workflow-store.ts',
   'lib/notifications.ts',
-  'supabase/migrations/001_initial_schema.sql',
+  'supabase/migrations',
   'supabase/seed.sql',
   'vercel.json'
 ];
@@ -25,6 +25,14 @@ for(const file of requiredFiles){
   if(!ok)failed=true;
 }
 
+const migrationsPath=resolve(root,'supabase/migrations');
+if(existsSync(migrationsPath)){
+  const migrations=readdirSync(migrationsPath).filter(name=>name.toLowerCase().endsWith('.sql'));
+  const ok=migrations.length>0;
+  console.log(`${ok?'✓':'✗'} SQL migrations found: ${migrations.length}`);
+  if(!ok)failed=true;
+}
+
 const envNames=['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_ANON_KEY'];
 console.log('\nEnvironment');
 for(const name of envNames){
@@ -33,7 +41,7 @@ for(const name of envNames){
 }
 
 const pkg=JSON.parse(readFileSync(resolve(root,'package.json'),'utf8'));
-for(const command of ['dev','build','start','typecheck','preflight']){
+for(const command of ['dev','build','start','typecheck','preflight','supabase:bootstrap','verify']){
   const ok=Boolean(pkg.scripts?.[command]);
   console.log(`${ok?'✓':'✗'} npm script: ${command}`);
   if(!ok)failed=true;
