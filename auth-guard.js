@@ -1,0 +1,1 @@
+(()=>{let session=null;try{session=JSON.parse(localStorage.hroxSession||'null')}catch{}if(!session){location.replace('/-hrox-pilot/login.html');return}window.HROX_SESSION=session;window.hroxLogout=()=>{localStorage.removeItem('hroxSession');location.replace('/-hrox-pilot/login.html')}})();
