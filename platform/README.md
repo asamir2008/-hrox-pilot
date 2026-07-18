@@ -32,27 +32,30 @@ Production rebuild using Next.js, TypeScript and Supabase.
 
 ### Sprint 3 — Field Visit Workspace
 - [x] Role-filtered manager assignment inbox
-- [x] Demo check-in action
+- [x] GPS-enabled check-in with location accuracy
 - [x] Daily notes
 - [x] Private report storage bucket and upload policies
 - [x] Evidence upload service with Demo fallback
-- [ ] GPS-enabled check-in
-- [ ] Attachments and evidence upload UI
-- [x] Final report submission demo
-- [ ] Persist daily notes and report form fields in Supabase
+- [x] Attachments and evidence upload UI
+- [x] Final report summary and submission
+- [ ] Persist GPS, notes and report form fields in Supabase
 
 ### Sprint 4 — Coordinator Monitoring
 - [x] Status by manager and project
 - [x] Report acceptance action
+- [x] Select one or multiple completed reports for consolidation
+- [x] Return report to manager with comments
 - [x] Consolidated submission to Director
-- [ ] Select one or multiple reports for consolidation
-- [ ] Return report to manager with comments
+- [ ] Persist consolidation records in Supabase
 
 ### Sprint 5 — Executive Dashboard
-- [x] Initial completion and overdue KPIs
+- [x] Completion and overdue KPIs
+- [x] Project coverage and pending-review analytics
+- [x] Risk alert count
 - [x] Decision dashboard handoff state
-- [ ] Full risk, delay and coverage analytics
-- [ ] Export and audit history
+- [x] CSV export
+- [x] Full audit history screen
+- [ ] PDF executive report
 
 ### Deployment
 - [x] Vercel build configuration
