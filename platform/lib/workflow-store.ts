@@ -30,7 +30,7 @@ export function roleLabel(user:DemoUser){return user.role==='director'?'Senior H
 function normalize(state:WorkflowState):WorkflowState{return {...state,assignments:(state.assignments||[]).map(a=>({...a,notes:a.notes||[],attachments:a.attachments||[],reportSummary:a.reportSummary||'',coordinatorComment:a.coordinatorComment||'',selectedForConsolidation:Boolean(a.selectedForConsolidation)})),activity:state.activity||[]}}
 
 async function persistRemote(state:WorkflowState){
-  if(!isSupabaseConfigured)return;
+  if(!isSupabaseConfigured||!supabase)return;
   const {error}=await supabase.rpc('save_demo_workflow',{payload:state});
   if(error)console.error('HROX workflow persistence failed',error);
 }
