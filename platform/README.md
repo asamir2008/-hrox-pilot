@@ -10,9 +10,12 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Demo accounts for Director, Coordinator, Manager and Admin
 - [x] Role-based dashboard routing
 - [x] Initial Supabase schema
+- [x] Browser Supabase client and environment template
+- [x] RLS policies for users, projects, requests, plans, assignments, notes and reports
+- [x] User directory component with activation status
+- [x] Project registry component
 - [ ] Connect real Supabase project
-- [ ] Create real users and RLS policies
-- [ ] User directory and account administration
+- [ ] Create real users in Supabase Auth
 
 ### Sprint 2 — Rotation Request and Planning
 - [x] Director creates rotation request in demo workflow
@@ -28,8 +31,9 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Role-filtered manager assignment inbox
 - [x] Demo check-in action
 - [x] Daily notes
+- [x] Private report storage bucket and upload policies
 - [ ] GPS-enabled check-in
-- [ ] Attachments and evidence upload
+- [ ] Attachments and evidence upload UI
 - [x] Final report submission demo
 - [ ] Persist notes and reports in Supabase
 
@@ -46,6 +50,14 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [ ] Full risk, delay and coverage analytics
 - [ ] Export and audit history
 
+### Deployment
+- [x] Vercel build configuration
+- [x] `.env.example`
+- [ ] Import repository into Vercel
+- [ ] Add Supabase environment variables
+- [ ] Run database migrations
+- [ ] Production smoke test
+
 ## Local run
 
 ```bash
@@ -59,4 +71,5 @@ npm run dev
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 ```
