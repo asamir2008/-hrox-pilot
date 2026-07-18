@@ -1,5 +1,7 @@
 import type { DemoUser } from './demo-users';
+import { demoUsers } from './demo-users';
 import type { Assignment, WorkflowState } from './workflow-store';
+import { loadWorkflow as loadDemoWorkflow, saveWorkflow as saveDemoWorkflow } from './workflow-store';
 import { createSupabaseBrowserClient } from './supabase/client';
 
 export type ProjectRecord={id:string;code:string;name:string;active:boolean};
@@ -22,13 +24,13 @@ const hasSupabase=Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL&&process.env.NEXT
 const demoProvider:DataProvider={
   mode:'demo',
   async getCurrentUser(){const raw=localStorage.getItem('hrox-session');return raw?JSON.parse(raw):null},
-  async signIn(){throw new Error('Use demo login helper in demo mode')},
+  async signIn(email,password){const user=demoUsers.find(x=>x.email.toLowerCase()===email.toLowerCase()&&x.password===password);if(!user)throw new Error('Invalid email or password');localStorage.setItem('hrox-session',JSON.stringify(user));return user},
   async signOut(){localStorage.removeItem('hrox-session')},
-  async listUsers(){const raw=localStorage.getItem('hrox-users');return raw?JSON.parse(raw):[]},
-  async listProjects(){const raw=localStorage.getItem('hrox-projects');return raw?JSON.parse(raw):[]},
-  async loadWorkflow(){const raw=localStorage.getItem('hrox-platform-workflow');if(!raw)throw new Error('Workflow not initialized');return JSON.parse(raw)},
-  async saveWorkflow(state){localStorage.setItem('hrox-platform-workflow',JSON.stringify(state))},
-  async uploadEvidence(assignmentId,file){const key=`hrox-evidence-${assignmentId}`;const existing=JSON.parse(localStorage.getItem(key)||'[]');existing.push({name:file.name,size:file.size,type:file.type,uploadedAt:new Date().toISOString()});localStorage.setItem(key,JSON.stringify(existing));return `demo://${assignmentId}/${encodeURIComponent(file.name)}`}
+  async listUsers(){return demoUsers.map((x,i)=>({id:String(i+1),name:x.name,email:x.email,role:x.role,title:x.title,active:true}))},
+  async listProjects(){return ['Mataf Expansion','Shamiyah Development','Makkah Gate','Central Utility','Haram Security','North Plaza'].map((name,i)=>({id:String(i+1),code:`PRJ-${String(i+1).padStart(3,'0')}`,name,active:true}))},
+  async loadWorkflow(){return loadDemoWorkflow()},
+  async saveWorkflow(state){saveDemoWorkflow(state)},
+  async uploadEvidence(assignmentId,file){const key=`hrox-evidence-${assignmentId}`;const existing=JSON.parse(localStorage.getItem(key)||'[]');existing.push({name:file.name,size:file.size,type:file.type,uploadedAt:new Date().toISOString()});localStorage.setItem(key,JSON.stringify(existing));return URL.createObjectURL(file)}
 };
 
 const supabaseProvider:DataProvider={
@@ -38,7 +40,7 @@ const supabaseProvider:DataProvider={
   async signOut(){await createSupabaseBrowserClient().auth.signOut()},
   async listUsers(){const {data,error}=await createSupabaseBrowserClient().from('profiles').select('id,full_name,email,role,title,active').order('full_name');if(error)throw error;return (data||[]).map(x=>({id:x.id,name:x.full_name,email:x.email,role:x.role,title:x.title,active:x.active}))},
   async listProjects(){const {data,error}=await createSupabaseBrowserClient().from('projects').select('id,code,name,active').order('name');if(error)throw error;return data||[]},
-  async loadWorkflow(){const supabase=createSupabaseBrowserClient();const {data:plan,error}=await supabase.from('rotation_plans').select('id,title,period,status,director_comment,rotation_assignments(*)').order('created_at',{ascending:false}).limit(1).maybeSingle();if(error)throw error;if(!plan)throw new Error('No workflow found');const assignments:Assignment[]=(plan.rotation_assignments||[]).map((x:any)=>({id:x.reference_no,project:x.project_name,managerEmail:x.manager_email,managerName:x.manager_name,startDate:x.start_date,endDate:x.end_date,status:x.status,notes:[]}));return {stage:plan.status,requestTitle:plan.title,requestPeriod:plan.period,requestInstructions:'',directorComment:plan.director_comment||'',assignments,activity:[]}},
+  async loadWorkflow(){const supabase=createSupabaseBrowserClient();const {data:plan,error}=await supabase.from('rotation_plans').select('id,title,period,status,director_comment,request_instructions,activity,rotation_assignments(*)').order('created_at',{ascending:false}).limit(1).maybeSingle();if(error)throw error;if(!plan)throw new Error('No workflow found');const assignments:Assignment[]=(plan.rotation_assignments||[]).map((x:any)=>({id:x.reference_no,project:x.project_name,managerEmail:x.manager_email,managerName:x.manager_name,startDate:x.start_date,endDate:x.end_date,status:x.status,notes:x.notes||[],checkIn:x.check_in||undefined,attachments:x.attachments||[],reportSummary:x.report_summary||'',coordinatorComment:x.coordinator_comment||'',selectedForConsolidation:Boolean(x.selected_for_consolidation)}));return {stage:plan.status,requestTitle:plan.title,requestPeriod:plan.period,requestInstructions:plan.request_instructions||'',directorComment:plan.director_comment||'',assignments,activity:plan.activity||[]}},
   async saveWorkflow(state){const supabase=createSupabaseBrowserClient();const {error}=await supabase.rpc('save_demo_workflow',{payload:state});if(error)throw error},
   async uploadEvidence(assignmentId,file){const supabase=createSupabaseBrowserClient();const path=`${assignmentId}/${crypto.randomUUID()}-${file.name}`;const {error}=await supabase.storage.from('visit-evidence').upload(path,file);if(error)throw error;return path}
 };
