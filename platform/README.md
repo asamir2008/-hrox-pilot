@@ -70,7 +70,7 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Full audit history screen
 - [x] Printable executive report page
 - [x] Browser Print / Save PDF workflow
-- [ ] Add branded cover and signatures to PDF report
+- [x] Branded cover page and approval signatures
 
 ### Quality and Deployment
 - [x] Vercel build configuration
@@ -78,6 +78,7 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Health endpoint showing Demo/Supabase mode
 - [x] GitHub Actions CI for TypeScript and production build
 - [x] Compile-safety fixes for nullable Supabase clients
+- [x] CI configuration no longer depends on a missing lockfile
 - [ ] Confirm first CI build is green
 - [ ] Import repository into Vercel using `platform` as Root Directory
 - [ ] Add Supabase environment variables
