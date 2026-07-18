@@ -28,7 +28,11 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Shared workflow state and activity history
 - [x] Transactional Supabase workflow-save RPC
 - [x] Supabase workflow load/save adapter
-- [ ] Email and in-app assignment notifications
+- [x] Dual-mode in-app notification service
+- [x] Notification table and RLS policies
+- [x] Role-based notification center page
+- [ ] Wire every workflow transition to notification creation
+- [ ] Optional email delivery provider
 
 ### Sprint 3 — Field Visit Workspace
 - [x] Role-filtered manager assignment inbox
@@ -55,7 +59,9 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Decision dashboard handoff state
 - [x] CSV export
 - [x] Full audit history screen
-- [ ] PDF executive report
+- [x] Printable executive report page
+- [x] Browser Print / Save PDF workflow
+- [ ] Add branded cover and signatures to PDF report
 
 ### Deployment
 - [x] Vercel build configuration
