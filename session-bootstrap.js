@@ -1,0 +1,1 @@
+if(window.HROX_SESSION){localStorage.hroxRole=HROX_SESSION.role==='admin'?'director':HROX_SESSION.role;}
