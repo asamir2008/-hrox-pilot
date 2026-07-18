@@ -31,7 +31,8 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Dual-mode in-app notification service
 - [x] Notification table and RLS policies
 - [x] Role-based notification center page
-- [ ] Wire every workflow transition to notification creation
+- [x] Workflow notification event mapping for request, review, approval, check-in and reports
+- [ ] Invoke notification mapping from every dashboard action
 - [ ] Optional email delivery provider
 
 ### Sprint 3 — Field Visit Workspace
@@ -42,7 +43,9 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Evidence upload service with Demo fallback
 - [x] Attachments and evidence upload UI
 - [x] Final report summary and submission
-- [ ] Persist GPS, notes and report form fields in Supabase
+- [x] Database columns for GPS, report summary and coordinator comments
+- [x] Assignment attachment table and RLS
+- [ ] Switch dashboard fieldwork actions from local store to Supabase adapter
 
 ### Sprint 4 — Coordinator Monitoring
 - [x] Status by manager and project
@@ -50,7 +53,8 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Select one or multiple completed reports for consolidation
 - [x] Return report to manager with comments
 - [x] Consolidated submission to Director
-- [ ] Persist consolidation records in Supabase
+- [x] Consolidated report tables and RLS policies
+- [ ] Switch coordinator report actions from local store to Supabase adapter
 
 ### Sprint 5 — Executive Dashboard
 - [x] Completion and overdue KPIs
@@ -63,10 +67,12 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Browser Print / Save PDF workflow
 - [ ] Add branded cover and signatures to PDF report
 
-### Deployment
+### Quality and Deployment
 - [x] Vercel build configuration
 - [x] `.env.example`
 - [x] Health endpoint showing Demo/Supabase mode
+- [x] GitHub Actions CI for TypeScript and production build
+- [ ] Confirm first CI build is green
 - [ ] Import repository into Vercel using `platform` as Root Directory
 - [ ] Add Supabase environment variables
 - [ ] Run database migrations and `seed.sql`
