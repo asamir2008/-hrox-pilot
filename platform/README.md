@@ -79,17 +79,31 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] GitHub Actions CI for TypeScript and production build
 - [x] Compile-safety fixes for nullable Supabase clients
 - [x] CI configuration no longer depends on a missing lockfile
+- [x] Deployment preflight checker
+- [x] Unified `npm run verify` command
 - [ ] Confirm first CI build is green
 - [ ] Import repository into Vercel using `platform` as Root Directory
 - [ ] Add Supabase environment variables
 - [ ] Run database migrations and `seed.sql`
 - [ ] Production smoke test
 
-## Local run
+## Local verification
 
 ```bash
 cd platform
 npm install
+npm run verify
+```
+
+The verification command runs:
+
+1. Required-file and environment preflight
+2. TypeScript validation
+3. Production Next.js build
+
+Run locally in development mode:
+
+```bash
 npm run dev
 ```
 
