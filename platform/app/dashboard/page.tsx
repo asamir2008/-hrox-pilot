@@ -1,51 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type { DemoUser } from '@/lib/demo-users';
+import {useEffect,useMemo,useState} from 'react';
+import {useRouter} from 'next/navigation';
+import type {DemoUser} from '@/lib/demo-users';
+import {loadWorkflow,resetWorkflow,saveWorkflow,type Assignment,type WorkflowState} from '@/lib/workflow-store';
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<DemoUser | null>(null);
+const projects=['Mataf Expansion','Shamiyah Development','Makkah Gate','Central Utility','Haram Security','North Plaza'];
+const managers=[{name:'Omar Khaled',email:'manager1@hrox.demo'},{name:'Sara Nabil',email:'manager2@hrox.demo'}];
 
-  useEffect(() => {
-    const raw = localStorage.getItem('hrox-session');
-    if (!raw) {
-      router.replace('/');
-      return;
-    }
-    setUser(JSON.parse(raw));
-  }, [router]);
-
-  if (!user) return null;
-
-  const roleMessage = user.role === 'director'
-    ? 'Review, edit and approve rotation plans. Monitor consolidated reports and executive KPIs.'
-    : user.role === 'coordinator'
-      ? 'Build rotation plans, select registered managers, monitor visits and submit consolidated reports.'
-      : user.role === 'manager'
-        ? 'View your assigned projects, check in, submit daily notes and complete field reports.'
-        : 'Manage users, roles, projects and platform configuration.';
-
-  return (
-    <main className="shell">
-      <aside className="side">
-        <div className="sideBrand"><div className="mark">H</div><span>HROX</span></div>
-        <nav className="nav"><a className="active">Overview</a><a>My Inbox</a><a>Rotation Plans</a><a>Field Visits</a><a>Reports</a><a>Users</a></nav>
-      </aside>
-      <section className="main">
-        <header className="top">
-          <div><div className="eyebrow">Role-based workspace</div><h1>Welcome, {user.name}</h1><p className="sub">{roleMessage}</p></div>
-          <button className="demo" onClick={() => { localStorage.removeItem('hrox-session'); router.replace('/'); }}>Sign out</button>
-        </header>
-        <div className="cards">
-          <div className="card"><small>Role</small><strong>{user.title}</strong></div>
-          <div className="card"><small>Open Tasks</small><strong>{user.role === 'manager' ? '2' : '1'}</strong></div>
-          <div className="card"><small>Current Cycle</small><strong>Q3 2026</strong></div>
-          <div className="card"><small>Workflow Status</small><strong>Active</strong></div>
-        </div>
-        <div className="card" style={{marginTop:16}}><div className="eyebrow">Sprint 1 foundation</div><h2>Authentication and User Management</h2><p className="sub">This workspace now reads the signed-in user and opens the correct role context. The next implementation step adds the user directory, project registry and the Director → Coordinator planning workflow.</p></div>
-      </section>
-    </main>
-  );
+export default function DashboardPage(){
+ const router=useRouter();
+ const [user,setUser]=useState<DemoUser|null>(null);
+ const [flow,setFlow]=useState<WorkflowState|null>(null);
+ const [tab,setTab]=useState('overview');
+ useEffect(()=>{const raw=localStorage.getItem('hrox-session');if(!raw){router.replace('/');return}setUser(JSON.parse(raw));setFlow(loadWorkflow())},[router]);
+ const persist=(next:WorkflowState)=>{setFlow(next);saveWorkflow(next)};
+ const log=(next:WorkflowState,message:string)=>persist({...next,activity:[new Date().toLocaleString()+' — '+message,...next.activity]});
+ const myAssignments=useMemo(()=>!user||!flow?[]:user.role==='manager'?flow.assignments.filter(a=>a.managerEmail===user.email):flow.assignments,[user,flow]);
+ if(!user||!flow)return null;
+ const canEditPlan=user.role==='coordinator'||(user.role==='director'&&flow.stage==='review');
+ const updateAssignment=(id:string,key:keyof Assignment,value:string|string[])=>persist({...flow,assignments:flow.assignments.map(a=>a.id===id?{...a,[key]:value}:a)});
+ const addAssignment=()=>{const n=flow.assignments.length+1;persist({...flow,assignments:[...flow.assignments,{id:`A-${String(n).padStart(3,'0')}`,project:projects[0],managerEmail:managers[0].email,managerName:managers[0].name,startDate:'2026-08-10',endDate:'2026-08-12',status:'Scheduled',notes:[]}]})};
+ const nav=['overview','request','plan','assignments','reports'];
+ const stageText={request:'Waiting for Director request',planning:'Coordinator preparing plan',review:'Director reviewing plan',assigned:'Assignments released',fieldwork:'Field visits in progress',reporting:'Reports under coordinator review',executive:'Executive dashboard ready'}[flow.stage];
+ return <main className="shell"><aside className="side"><div className="sideBrand"><div className="mark">H</div><span>HROX</span></div><nav className="nav">{nav.map(x=><button key={x} className={tab===x?'active':''} onClick={()=>setTab(x)}>{x[0].toUpperCase()+x.slice(1)}</button>)}</nav></aside><section className="main"><header className="top"><div><div className="eyebrow">{user.title}</div><h1>{user.name}</h1><p className="sub">{stageText}</p></div><div className="topActions"><span className="statusChip">{flow.stage}</span><button className="demo" onClick={()=>{localStorage.removeItem('hrox-session');router.replace('/')}}>Sign out</button></div></header>
+ {tab==='overview'&&<><div className="cards"><div className="card"><small>Workflow stage</small><strong>{flow.stage}</strong></div><div className="card"><small>Assignments</small><strong>{myAssignments.length}</strong></div><div className="card"><small>Reports submitted</small><strong>{flow.assignments.filter(a=>a.status==='Report submitted'||a.status==='Completed').length}</strong></div><div className="card"><small>Overdue</small><strong>{flow.assignments.filter(a=>a.status==='Overdue').length}</strong></div></div><section className="card section"><div className="sectionHead"><div><div className="eyebrow">End-to-end process</div><h2>Rotation cycle status</h2></div><button className="demo" onClick={()=>{resetWorkflow();location.reload()}}>Reset demo</button></div><div className="steps">{['request','planning','review','assigned','fieldwork','reporting','executive'].map((s,i)=>{const order=['request','planning','review','assigned','fieldwork','reporting','executive'];const current=order.indexOf(flow.stage);return <div key={s} className={`flowStep ${i<current?'done':i===current?'current':''}`}><b>{i<current?'✓':i===current?'●':'○'} {s}</b><small>{i<current?'Completed':i===current?'In progress':'Upcoming'}</small></div>})}</div></section></>}
+ {tab==='request'&&<section className="card section"><div className="eyebrow">Step 1</div><h2>Rotation plan request</h2><div className="formGrid"><label>Request title<input value={flow.requestTitle} onChange={e=>persist({...flow,requestTitle:e.target.value})} disabled={user.role!=='director'||flow.stage!=='request'}/></label><label>Period<input value={flow.requestPeriod} onChange={e=>persist({...flow,requestPeriod:e.target.value})} disabled={user.role!=='director'||flow.stage!=='request'}/></label><label className="wide">Instructions<textarea value={flow.requestInstructions} onChange={e=>persist({...flow,requestInstructions:e.target.value})} disabled={user.role!=='director'||flow.stage!=='request'}/></label></div>{user.role==='director'&&flow.stage==='request'&&<button className="primary actionBtn" onClick={()=>log({...flow,stage:'planning'},'Director sent planning request to Coordinator')}>Send to Coordinator</button>}</section>}
+ {tab==='plan'&&<section className="card section"><div className="sectionHead"><div><div className="eyebrow">Shared planning workspace</div><h2>{flow.requestTitle}</h2><p className="sub">Coordinator builds the plan. Director can edit people, projects and dates before approval.</p></div>{canEditPlan&&<button className="demo" onClick={addAssignment}>+ Add assignment</button>}</div><div className="tableWrap"><table><thead><tr><th>ID</th><th>Project</th><th>Assigned manager</th><th>Start</th><th>End</th><th>Status</th></tr></thead><tbody>{flow.assignments.map(a=><tr key={a.id}><td>{a.id}</td><td>{canEditPlan?<select value={a.project} onChange={e=>updateAssignment(a.id,'project',e.target.value)}>{projects.map(p=><option key={p}>{p}</option>)}</select>:a.project}</td><td>{canEditPlan?<select value={a.managerEmail} onChange={e=>{const m=managers.find(x=>x.email===e.target.value)!;persist({...flow,assignments:flow.assignments.map(x=>x.id===a.id?{...x,managerEmail:m.email,managerName:m.name}:x)})}}>{managers.map(m=><option value={m.email} key={m.email}>{m.name}</option>)}</select>:a.managerName}</td><td>{canEditPlan?<input type="date" value={a.startDate} onChange={e=>updateAssignment(a.id,'startDate',e.target.value)}/>:a.startDate}</td><td>{canEditPlan?<input type="date" value={a.endDate} onChange={e=>updateAssignment(a.id,'endDate',e.target.value)}/>:a.endDate}</td><td><span className="statusChip">{a.status}</span></td></tr>)}</tbody></table></div><div className="workflowActions">{user.role==='coordinator'&&flow.stage==='planning'&&<button className="primary actionBtn" onClick={()=>log({...flow,stage:'review'},'Coordinator submitted plan to Director')}>Submit to Director</button>}{user.role==='director'&&flow.stage==='review'&&<><input className="comment" placeholder="Director comment" value={flow.directorComment} onChange={e=>persist({...flow,directorComment:e.target.value})}/><button className="demo" onClick={()=>log({...flow,stage:'planning'},'Director returned plan to Coordinator')}>Return for changes</button><button className="primary actionBtn" onClick={()=>log({...flow,stage:'assigned'},'Director approved plan; assignments released automatically')}>Approve & release</button></>}</div></section>}
+ {tab==='assignments'&&<section className="card section"><div className="eyebrow">Role-based assignment workspace</div><h2>{user.role==='manager'?'My field assignments':'All assignments'}</h2><div className="assignmentGrid">{myAssignments.map(a=><article className="assignment" key={a.id}><div className="sectionHead"><div><b>{a.project}</b><p className="sub">{a.startDate} → {a.endDate}</p></div><span className="statusChip">{a.status}</span></div><p><b>Assigned to:</b> {a.managerName}</p>{user.role==='manager'&&flow.stage!=='request'&&flow.stage!=='planning'&&flow.stage!=='review'&&<div className="workflowActions"><button className="demo" onClick={()=>updateAssignment(a.id,'status','Checked in')}>Check in</button><button className="demo" onClick={()=>{const text=prompt('Daily note');if(text)updateAssignment(a.id,'notes',[...a.notes,text])}}>Add daily note</button><button className="primary actionBtn" onClick={()=>{updateAssignment(a.id,'status','Report submitted');log({...flow,stage:'reporting',assignments:flow.assignments.map(x=>x.id===a.id?{...x,status:'Report submitted'}:x)},`${user.name} submitted field report for ${a.project}`)}}>Submit report</button></div>}<ul>{a.notes.map((n,i)=><li key={i}>{n}</li>)}</ul></article>)}</div></section>}
+ {tab==='reports'&&<section className="card section"><div className="eyebrow">Coordinator & executive reporting</div><h2>Submitted reports</h2><div className="tableWrap"><table><thead><tr><th>Project</th><th>Manager</th><th>Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>{flow.assignments.map(a=><tr key={a.id}><td>{a.project}</td><td>{a.managerName}</td><td>{a.status}</td><td>{a.notes.length}</td><td>{user.role==='coordinator'&&a.status==='Report submitted'?<button className="demo" onClick={()=>updateAssignment(a.id,'status','Completed')}>Accept report</button>:'—'}</td></tr>)}</tbody></table></div>{user.role==='coordinator'&&flow.assignments.some(a=>a.status==='Completed')&&<button className="primary actionBtn" onClick={()=>log({...flow,stage:'executive'},'Coordinator submitted consolidated report to Director')}>Submit selected reports to Director</button>}{user.role==='director'&&flow.stage==='executive'&&<div className="executive"><h3>Decision dashboard</h3><p className="sub">The consolidated cycle report is ready. Use completion, delay and field-note patterns to take management decisions.</p></div>}</section>}
+ </section></main>
 }
