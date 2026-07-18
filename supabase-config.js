@@ -1,0 +1,1 @@
+window.HROX_SUPABASE={url:'',publishableKey:'',enabled:false};
