@@ -4,6 +4,7 @@ import {useEffect,useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {loadWorkflow,type WorkflowState} from '@/lib/workflow-store';
 import type {DemoUser} from '@/lib/demo-users';
+import './report.css';
 
 export default function ExecutiveReportPage(){
   const router=useRouter();
