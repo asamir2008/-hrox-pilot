@@ -14,6 +14,8 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] RLS policies for users, projects, requests, plans, assignments, notes and reports
 - [x] User directory component with activation status
 - [x] Project registry component
+- [x] Dual data provider: automatic Demo/Supabase mode
+- [x] Database seed script for projects and initial plan
 - [ ] Connect real Supabase project
 - [ ] Create real users in Supabase Auth
 
@@ -24,7 +26,8 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Director edits people, projects and dates directly
 - [x] Return, approve and automatic assignment release
 - [x] Shared workflow state and activity history
-- [ ] Persist workflow in Supabase
+- [x] Transactional Supabase workflow-save RPC
+- [x] Supabase workflow load/save adapter
 - [ ] Email and in-app assignment notifications
 
 ### Sprint 3 — Field Visit Workspace
@@ -32,10 +35,11 @@ Production rebuild using Next.js, TypeScript and Supabase.
 - [x] Demo check-in action
 - [x] Daily notes
 - [x] Private report storage bucket and upload policies
+- [x] Evidence upload service with Demo fallback
 - [ ] GPS-enabled check-in
 - [ ] Attachments and evidence upload UI
 - [x] Final report submission demo
-- [ ] Persist notes and reports in Supabase
+- [ ] Persist daily notes and report form fields in Supabase
 
 ### Sprint 4 — Coordinator Monitoring
 - [x] Status by manager and project
@@ -53,9 +57,10 @@ Production rebuild using Next.js, TypeScript and Supabase.
 ### Deployment
 - [x] Vercel build configuration
 - [x] `.env.example`
-- [ ] Import repository into Vercel
+- [x] Health endpoint showing Demo/Supabase mode
+- [ ] Import repository into Vercel using `platform` as Root Directory
 - [ ] Add Supabase environment variables
-- [ ] Run database migrations
+- [ ] Run database migrations and `seed.sql`
 - [ ] Production smoke test
 
 ## Local run
@@ -64,6 +69,12 @@ Production rebuild using Next.js, TypeScript and Supabase.
 cd platform
 npm install
 npm run dev
+```
+
+Health check after startup:
+
+```text
+http://localhost:3000/api/health
 ```
 
 ## Required environment variables
