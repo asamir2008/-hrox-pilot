@@ -11,7 +11,7 @@ export type NotificationInput={
 const DEMO_KEY='hrox-notifications';
 
 export async function sendNotification(input:NotificationInput){
-  if(!isSupabaseConfigured){
+  if(!isSupabaseConfigured||!supabase){
     const current=JSON.parse(localStorage.getItem(DEMO_KEY)||'[]');
     current.unshift({id:crypto.randomUUID(),...input,read:false,createdAt:new Date().toISOString()});
     localStorage.setItem(DEMO_KEY,JSON.stringify(current));
@@ -28,7 +28,7 @@ export async function sendNotification(input:NotificationInput){
 }
 
 export async function loadNotifications(email:string){
-  if(!isSupabaseConfigured){
+  if(!isSupabaseConfigured||!supabase){
     return JSON.parse(localStorage.getItem(DEMO_KEY)||'[]').filter((n:{recipientEmail:string})=>n.recipientEmail===email);
   }
   const {data,error}=await supabase.from('notifications').select('*').eq('recipient_email',email).order('created_at',{ascending:false});
